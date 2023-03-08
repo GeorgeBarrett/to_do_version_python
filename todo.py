@@ -143,6 +143,66 @@ class Handler:
 
         print(f"Done: {to_remove.strip()}")
 
+    
+    def pri(self):
+        # own enhancemnt TODO
+        # currently possible to have two items assigned to (A) 
+        parser = argparse.ArgumentParser()
+        parser.add_argument("action", choices=["pri"])
+        parser.add_argument("inputs", type=str, nargs="*")
+        args = parser.parse_args()
+
+        list_inputs = args.inputs
+        if not len(list_inputs) == 2:
+            print(f"Two input arguments required: line number (integer) and priority (single letter). {len(list_inputs)} is an incorrect amount of arguments.")
+            return
+        line_number = list_inputs[0]
+        prio = list_inputs[1]
+
+        try:
+            line_number = int(line_number)
+        except:
+            print(f"First input must be an integer. {line_number} is not acceptable.")
+            return
+
+        list_index = line_number - 1
+
+        if list_index < 0:
+            print('Must start from 1')
+            return
+
+        with open(self.todo_file, "r") as f:
+            items = f.readlines()
+        
+        if not len(items) > list_index:
+            print(f"There is no item {line_number}. Please choose a number from 1 to {len(items)}")
+            return
+        
+        # TODO I could add if statements like these to other functions
+        # This way the user knows when to input letters and/or numbers and in which order
+        if not len(prio) == 1:
+            print(f"Priority must be a single alphabetical character (from A, most important, to Z, least important). {prio} is not acceptable.")
+            return
+
+        if not prio.isalpha():
+            print(f"Priority must be a single alphabetical character (from A, most important, to Z, least important). {prio} is not acceptable.")
+            return
+
+        prio = prio.upper()
+        
+        line_before = items[list_index]
+
+        if line_before[0]=="(" and line_before[2]==")":
+            line_before = line_before[3:]
+
+        line_before = line_before.lstrip()
+        line_after = "({}) {}".format(prio, line_before)
+        items[list_index] = line_after
+        
+        with open(self.todo_file, "w") as f:
+            out = "".join(items)
+            f.write(out)
+
 
 if __name__ == "__main__":
     handler = Handler()
