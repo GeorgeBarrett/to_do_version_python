@@ -71,6 +71,17 @@ class Handler:
                         print(f"{item[1]:>{num_of_digits}} {item[0]}")
         print(f"---\n{printed_items} item(s)")
 
+    
+    def add(self):
+        # Add a new item to the todo file
+        parser = argparse.ArgumentParser()
+        parser.add_argument("action", choices=["add"])
+        parser.add_argument("item", type=str)
+        args = parser.parse_args()
+
+        with open(self.todo_file, "a") as f:  
+            f.write(args.item.replace("\n", " ") + "\n")
+
 
 if __name__ == "__main__":
     handler = Handler()
