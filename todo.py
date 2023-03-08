@@ -178,14 +178,12 @@ class Handler:
             print(f"There is no item {line_number}. Please choose a number from 1 to {len(items)}")
             return
         
-        # TODO I could add if statements like these to other functions
-        # This way the user knows when to input letters and/or numbers and in which order
         if not len(prio) == 1:
-            print(f"Priority must be a single alphabetical character (from A, most important, to Z, least important). {prio} is not acceptable.")
+            print(f"The priority (second argument) must be a single alphabetical character (from A, most important, to Z, least important (case-insensitive)). {prio} is not acceptable.")
             return
 
         if not prio.isalpha():
-            print(f"Priority must be a single alphabetical character (from A, most important, to Z, least important). {prio} is not acceptable.")
+            print(f"The priority (second argument) must be a single alphabetical character (from A, most important, to Z, least important (case-insensitive)). {prio} is not acceptable.")
             return
 
         prio = prio.upper()
