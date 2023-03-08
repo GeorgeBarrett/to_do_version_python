@@ -1,6 +1,10 @@
 import argparse
 import settings
 import itertools
+from datetime import datetime   
+
+def get_today_time():
+    return datetime.today().strftime('%Y-%m-%d')
 
 
 class GetMaxLineNumber:
@@ -24,7 +28,7 @@ class Handler:
 
     
     def handle(self):
-        # Interpret the first command line argument, and redirect
+        # interpret the first command line argument, and redirect
         parser = argparse.ArgumentParser()
         parser.add_argument(
             "action",
@@ -39,7 +43,7 @@ class Handler:
 
     
     def list(self):
-        # Show all items in the todo file
+        # show all items in the todo file
         parser = argparse.ArgumentParser()
         parser.add_argument("action", choices=["list"])
         parser.add_argument("filter", type=str, nargs="*")
@@ -73,7 +77,7 @@ class Handler:
 
     
     def add(self):
-        # Add a new item to the todo file
+        # add a new item to the todo file
         parser = argparse.ArgumentParser()
         parser.add_argument("action", choices=["add"])
         parser.add_argument("item", type=str)
@@ -106,6 +110,38 @@ class Handler:
             f.write(new_todos)
 
         print(f"Deleted: {items[list_index].strip()}")
+    
+
+    def do(self):
+        # move an item from the todo file to the done file
+        parser = argparse.ArgumentParser()
+        parser.add_argument("action", choices=["do"])
+        parser.add_argument("line_number", type=int)
+        args = parser.parse_args()
+        
+        list_index = args.line_number - 1
+
+        if list_index < 0:
+            print('Must start from 1')
+
+        with open(self.todo_file, "r") as f:
+            items = f.readlines()
+        
+        if not len(items) > list_index:
+            print(f"There is no item {args.line_number}. Please choose a number from 1 to {len(items)}")
+            return
+
+        to_remove = items[list_index]
+        with open(self.done_file, "a") as f:
+            today_time = get_today_time()
+            f.write(f"{items[list_index].strip()} ({today_time})\n")
+
+        del items[list_index]
+
+        with open(self.todo_file, "w") as f:
+            f.write(''.join(items))
+
+        print(f"Done: {to_remove.strip()}")
 
 
 if __name__ == "__main__":
