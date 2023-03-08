@@ -82,6 +82,31 @@ class Handler:
         with open(self.todo_file, "a") as f:  
             f.write(args.item.replace("\n", " ") + "\n")
 
+    
+    def delete(self):
+        # delete an item from the todo file
+        parser = argparse.ArgumentParser()
+        parser.add_argument("action", choices=["delete"])
+        parser.add_argument("line_number", type=int)
+        args = parser.parse_args()
+
+        with open(self.todo_file, "r") as f:
+            items = f.readlines()
+        
+        list_index = args.line_number - 1
+
+        if not len(items) > list_index:
+            print(f"There is no item {args.line_number}. Please choose a number from 1 to {len(items)}")
+            return
+            
+        with open(self.todo_file, "w") as f:
+            new_todos = "".join(
+                items[: list_index] + items[list_index + 1 :] 
+            )
+            f.write(new_todos)
+
+        print(f"Deleted: {items[list_index].strip()}")
+
 
 if __name__ == "__main__":
     handler = Handler()
